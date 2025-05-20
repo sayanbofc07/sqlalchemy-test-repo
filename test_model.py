@@ -1,5 +1,6 @@
-from sqlalchemy import MetaData,Table, Column, Integer, String, Boolean, JSON, create_engine, text, ForeignKey
+from sqlalchemy import MetaData,Table, Column, Integer, String, Boolean, JSON, create_engine, text, ForeignKey, select, update
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import IntegrityError
 
 def get_windows_host_ip():
     try:
@@ -39,21 +40,32 @@ address_table = Table(
 
 # Insert type - 1
 with engine.connect() as conn:
-    insert_stmt = user.insert().values(
-        user_id = 1,
-        user_name="bob",
-        email_address="bob@example.com",
-        nickname="Bobby",
-        # status=True  # or 1
-    )
-    conn.execute(insert_stmt)
-    conn.execute(address_table.insert().values(
-        id=1,
-        user_id=1,
-        address="123 Main St"
-    ))
-    conn.commit()
-    print("done")
+    try:
+        insert_stmt = user.insert().values(
+            user_id = 2,
+            user_name="sayan",
+            email_address="sayan@example.com",
+            nickname="Rivu",
+            # status=True  # or 1
+        )
+        conn.execute(insert_stmt)
+        conn.execute(address_table.insert().values(
+            ## type - 1 -- single
+            # id=2,
+            # user_id=3,
+            # address="123 Main St"
+
+            ## type - 2 -- multiple
+            [
+                {"id": 2, "user_id": 2, "address": "add 2"},
+                {"id": 3, "user_id": 2, "address": "add 3"},
+            ]
+        ))
+        conn.commit()
+        print("done")
+    except IntegrityError as e:
+        msg = e.orig.args[1]
+        print(msg)
 
 ## Insert type - 2
 SessionLocal = sessionmaker(bind=engine)
@@ -74,10 +86,11 @@ session = SessionLocal()
 # print("done")
 
 ## fetch saved data
-id_ = 4
-result = session.execute(text("SELECT * FROM user WHERE user_id = :id"), {"id": id_})
+id_ = 2
+result = session.execute(text("SELECT email_address FROM user WHERE user_id = :id LIMIT 1"), {"id": id_})
 results = result.mappings().all()
-print(results)
+if len(results):
+    print(results[0]['email_address'])
 # print(user.__dict__)
 # print(metadata_obj.__dict__)
 # print(metadata_obj.sorted_tables)
