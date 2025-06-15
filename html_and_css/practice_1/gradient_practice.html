@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    div {
+      height: 600px;
+      width: 600px;
+      display: inline-block;
+      margin: 0 20px;
+    }
+    div.t1 {
+      background: radial-gradient(#f69d3c, #3f87a6);
+    }
+    div.t2 {
+      background: repeating-linear-gradient(
+        to top left,
+        rgba(43, 139, 236, 0.751) 50%,
+        rgba(221, 226, 230, 0.202) 100%
+      );
+    }
+  </style>
+  <body>
+    <div class="t1"></div>
+    <div class="t2"></div>
+  </body>
+</html>
